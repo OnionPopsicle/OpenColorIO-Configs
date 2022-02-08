@@ -11,7 +11,7 @@ roles:
   reference: Utility - Raw
 
   # Internal scene linear space
-  scene_linear: Utility - Linear - sRGB
+  scene_linear: ACES - ACEScg
   rendering: ACES - ACEScg
 
   # Default color space for byte image
