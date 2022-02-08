@@ -8,16 +8,36 @@ description: An ACES config generated from python
 
 
 roles:
-  color_picking: Output - sRGB
+  reference: Utility - Raw
+
+  # Internal scene linear space
+  scene_linear: ACES - ACEScg
+  rendering: ACES - ACEScg
+
+  # Default color space for byte image
+  default_byte: sRGB
+
+  # Default color space for float images
+  default_float: Linear
+
+  # Default color space sequencer is working in
+  default_sequencer: sRGB
+
+  # Distribution of colors in color picker
+  color_picking: sRGB
+
+  # Non-color data
+  data: Non-Color
+
+  # CIE XYZ color space
+  # XYZ: XYZ
+
+  # Specifed by OCIO, not used in Blender
   color_timing: ACES - ACEScc
   compositing_linear: ACES - ACEScg
   compositing_log: Input - ADX - ADX10
-  data: Utility - Raw
   default: ACES - ACES2065-1
   matte_paint: Utility - sRGB - Texture
-  reference: Utility - Raw
-  rendering: ACES - ACEScg
-  scene_linear: ACES - ACEScg
   texture_paint: ACES - ACEScc
 
 displays:
@@ -53,6 +73,64 @@ active_displays: [ACES]
 active_views: [sRGB, DCDM, DCDM P3D60 Limited, DCDM P3D65 Limited, P3-D60, P3-D65 ST2084 1000 nits, P3-D65 ST2084 2000 nits, P3-D65 ST2084 4000 nits, P3-DCI D60 simulation, P3-DCI D65 simulation, P3D65, P3D65 D60 simulation, P3D65 Rec.709 Limited, P3D65 ST2084 108 nits, Rec.2020, Rec.2020 P3D65 Limited, Rec.2020 Rec.709 Limited, Rec.2020 HLG 1000 nits, Rec.2020 ST2084 1000 nits, Rec.2020 ST2084 2000 nits, Rec.2020 ST2084 4000 nits, Rec.709, Rec.709 D60 sim., sRGB D60 sim., Raw, Log]
 
 colorspaces:
+  # Blender defaults
+  - !<ColorSpace>
+    name: sRGB
+    family: Blender
+    equalitygroup: sRGB - Texture
+    bitdepth: 32f
+    description: |
+      The sRGB - Texture color space
+    isdata: false
+    allocation: uniform
+    allocationvars: [0, 1]
+    from_reference: !<GroupTransform>
+      children:
+        - !<MatrixTransform> {matrix: [0.952552, 0, 9.36786e-05, 0, 0.343966, 0.728166, -0.0721325, 0, 0, 0, 1.00883, 0, 0, 0, 0, 1]}
+        - !<MatrixTransform> {matrix: [3.2096, -1.55743, -0.495805, 0, -0.970989, 1.88517, 0.0394894, 0, 0.0597193, -0.210104, 1.14312, 0, 0, 0, 0, 1]}
+        - !<FileTransform> {src: linear_to_sRGB.spi1d, interpolation: linear}
+
+  - !<ColorSpace>
+    name: Non-Color
+    family: Blender
+    equalitygroup: Raw
+    bitdepth: 32f
+    description: |
+      The Raw color space
+    isdata: true
+    allocation: uniform
+    allocationvars: [0, 1]
+
+  - !<ColorSpace>
+    name: Linear
+    family: Blender
+    equalitygroup: Linear - sRGB
+    bitdepth: 32f
+    description: |
+      The Linear - sRGB color space
+    isdata: false
+    allocation: lg2
+    allocationvars: [-8, 5, 0.00390625]
+    from_reference: !<GroupTransform>
+      children:
+        - !<MatrixTransform> {matrix: [0.952552, 0, 9.36786e-05, 0, 0.343966, 0.728166, -0.0721325, 0, 0, 0, 1.00883, 0, 0, 0, 0, 1]}
+        - !<MatrixTransform> {matrix: [3.2096, -1.55743, -0.495805, 0, -0.970989, 1.88517, 0.0394894, 0, 0.0597193, -0.210104, 1.14312, 0, 0, 0, 0, 1]}
+
+  #- !<ColorSpace>
+  #  name: XYZ
+  #  family: Blender
+  #  equalitygroup: XYZ - D60
+  #  bitdepth: 32f
+  #  description: |
+  #    The XYZ - D60 color space
+  #  isdata: false
+  #  allocation: lg2
+  #  allocationvars: [-8, 5, 0.00390625]
+  #  to_reference: !<MatrixTransform> {matrix: [1.04981, 0, -9.74845e-05, 0, -0.495903, 1.37331, 0.09824, 0, 0, 0, 0.991252, 0, 0, 0,# 0, 1]}
+  #  from_reference: !<MatrixTransform> {matrix: [0.952552, 0, 9.36786e-05, 0, 0.343966, 0.728166, -0.0721325, 0, 0, 0, 1.00883, 0,# 0, 0, 0, 1]}
+
+  # End of Blender specific
+
   - !<ColorSpace>
     name: ACES - ACES2065-1
     family: ACES
